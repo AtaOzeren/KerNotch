@@ -42,6 +42,7 @@ extension PetChoreographer {
         switch species {
         case .dog: performAsDog(reaction, on: stage, in: geometry)
         case .penguin: performAsPenguin(reaction, on: stage, in: geometry)
+        case .cow: performAsCow(reaction, on: stage, in: geometry)
         }
     }
 
@@ -56,7 +57,7 @@ extension PetChoreographer {
             performAgentNews(reaction, in: geometry)
         case .timerAlarm, .powerRush, .petted, .sweat, .dozeOff:
             performNews(reaction, on: stage, in: geometry)
-        case .wave, .preen, .tapFoot, .slip, .dance:
+        case .wave, .moo, .preen, .swatFly, .tapFoot, .ringBell, .slip, .snort, .dance, .happyMoo, .coolOff:
             return
         }
     }
@@ -332,7 +333,7 @@ extension PetChoreographer {
 
     /// Off towards the island's new outer corner while the island grows under
     /// it, then settling there.
-    private mutating func runAlongEdge(in geometry: PetStageGeometry) {
+    mutating func runAlongEdge(in geometry: PetStageGeometry) {
         travel(to: geometry.roamingRange.lowerBound, gait: .run)
         turn(.right)
         sitDown()
@@ -360,7 +361,8 @@ extension PetChoreographer {
         sitDown()
     }
 
-    private mutating func stretchAndYawn() {
+    /// Front legs out in a long bow, then sitting down for a yawn.
+    mutating func stretchAndYawn() {
         standUp()
         show(.stand)
         show(.playBow)
