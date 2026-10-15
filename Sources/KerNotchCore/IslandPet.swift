@@ -4,6 +4,8 @@ public struct IslandPet: Hashable, Sendable {
     public static let shiba = IslandPet(species: .dog)
     /// A penguin in the likeness of Tux.
     public static let penguin = IslandPet(species: .penguin)
+    /// A Holstein cow with a bell on its collar.
+    public static let cow = IslandPet(species: .cow)
 
     public let species: PetSpecies
     public let sprites: PetSpriteSheet

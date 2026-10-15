@@ -87,7 +87,7 @@ enum PenguinLoops {
             choreographer.show(.stand)
             choreographer.hold(0.5)
             return choreographer.loop()
-        case .nodding, .typing, .fishing:
+        case .nodding, .typing, .fishing, .fillingPail:
             var choreographer = PetChoreographer(startingAt: home, spriteWidth: spriteWidth, species: .penguin)
             choreographer.sit(for: 3, beats: [PetBeat(offset: 1.5, gesture: .blink)])
             emitNotes(&choreographer, startingAt: [0.1, 0.9])
@@ -106,7 +106,7 @@ enum PenguinLoops {
         switch pastime {
         case .fishing:
             fishing(at: home, spriteWidth: spriteWidth)
-        case .typing, .nodding, .swaying:
+        case .typing, .nodding, .swaying, .fillingPail:
             typing(at: home, spriteWidth: spriteWidth)
         }
     }

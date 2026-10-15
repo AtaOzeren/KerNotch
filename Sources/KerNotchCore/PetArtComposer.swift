@@ -67,6 +67,30 @@ extension PetArtComposer {
         }
     }
 
+    /// Each column of `rows` moved down by `drop(column)` rows — up where it
+    /// is negative — and clipped to the rows there are: a pose tilted, one end
+    /// lower than the other.
+    static func tilting(_ rows: [String], by drop: (Int) -> Int) -> [String] {
+        var grid = Array(repeating: Array(repeating: PetSpriteSheet.transparentKey, count: artWidth), count: rows.count)
+        for (row, line) in rows.enumerated() {
+            for (column, key) in line.enumerated() where key != PetSpriteSheet.transparentKey {
+                let target = row + drop(column)
+                if grid.indices.contains(target), grid[target].indices.contains(column) {
+                    grid[target][column] = key
+                }
+            }
+        }
+        return grid.map { String($0) }
+    }
+
+    /// Only what `rows` draws in `columns`; everything else left empty.
+    static func keeping(_ rows: [String], columns: Range<Int>) -> [String] {
+        rows.map { row in
+            String(
+                row.enumerated().map { column, key in columns.contains(column) ? key : PetSpriteSheet.transparentKey })
+        }
+    }
+
     static func emptyRows(_ count: Int) -> [String] {
         Array(repeating: String(repeating: PetSpriteSheet.transparentKey, count: artWidth), count: count)
     }

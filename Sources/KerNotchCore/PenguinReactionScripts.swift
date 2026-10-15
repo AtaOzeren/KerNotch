@@ -32,7 +32,8 @@ extension PetChoreographer {
             performPenguinAgentNews(reaction)
         case .timerAlarm, .powerRush, .petted, .sweat, .dozeOff:
             performPenguinNews(reaction, on: stage, in: geometry)
-        case .headTilt, .lookAround, .sulk, .faint, .zoomies:
+        case .headTilt, .lookAround, .sulk, .faint, .zoomies, .moo, .swatFly, .ringBell, .snort, .happyMoo,
+            .coolOff:
             return
         }
     }
@@ -126,17 +127,7 @@ extension PetChoreographer {
     private mutating func performPenguinAgentNews(_ reaction: PetReaction) {
         switch reaction {
         case .dazed:
-            sitDown()
-            show(.dazed)
-            circleStars(around: PenguinAnchors.head, for: 2.25)
-            for offset in [1, -1, -1, 1, 1, -1, -1, 1] {
-                hold(0.25)
-                sway(by: offset)
-            }
-            hold(0.25)
-            show(.sitBlink)
-            hold(0.13)
-            show(.sit)
+            seeStars(around: PenguinAnchors.head)
         case .slip:
             slipAndFall()
         case .celebrate:
