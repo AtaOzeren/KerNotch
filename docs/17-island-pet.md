@@ -1,14 +1,16 @@
 # Island Pet
 
-This document specifies the pet: the small pixel dog or penguin that can live on the island. It covers where the pet stands and how it shares the pill with activity icons, the art and the animation it is drawn with, the routine it performs, how it reacts to what happens on the island, and what it costs. It is a design specification — the code follows it, not the other way round.
+This document specifies the pet: the small pixel dog, penguin or cow that can live on the island. It covers where the pet stands and how it shares the pill with activity icons, the art and the animation it is drawn with, the routine it performs, how it reacts to what happens on the island, and what it costs. It is a design specification — the code follows it, not the other way round.
 
 ## What it is
 
 A Shiba Inu puppy, 32 × 24 pixels of pixel art drawn in 16 × 12 points, that lives on the leading (left) side of the island. It walks, sits, blinks, pants and wags its tail, and it answers what happens on the island: it cocks its head at an agent's question, celebrates a finished task, nods along to music, and naps once the island has been empty for a while. It is switched on in Settings › Pet and is **off by default**: the idle island draws nothing that moves (`02-performance-contract.md`), and a pet walking across it is a change the user opts into rather than one made for them. With the pet on, its reactions are always on: there is nothing further to configure.
 
-The pet can instead be a penguin in the likeness of Tux, the Linux mascot, the same size and density as the Shiba. It waddles rather than walks, slides on its belly wherever the dog would run, and has reactions of its own: it waves a flipper at the island opening, preens when it closes, squawks and taps its foot at an agent's question, slips flat on its back when one fails, dances and catches a fish when one finishes, and while an agent works it types at a laptop of its own or fishes through a hole in the ice. Settings › Pet chooses between them (`pet.species`, the dog by default).
+The pet can instead be a penguin in the likeness of Tux, the Linux mascot, the same size and density as the Shiba. It waddles rather than walks, slides on its belly wherever the dog would run, and has reactions of its own: it waves a flipper at the island opening, preens when it closes, squawks and taps its foot at an agent's question, slips flat on its back when one fails, dances and catches a fish when one finishes, and while an agent works it types at a laptop of its own or fishes through a hole in the ice. The pet can also be a Holstein cow: a white coat with slate patches, a pink muzzle, short horns, a yellow tag in its ear and a bell on a red collar. It rests the way cows do, lying with its legs folded under it, and goes down and gets up on its front knees; it skips along when it hurries. It moos hello when the island opens, chews its cud or swats a fly with its tail when it closes, moos or rings its bell at an agent's question, snorts steam or keels over with its legs in the air when one fails, bucks for joy or catches a daisy when one finishes, and while an agent works it types at a laptop or watches a pail beside it fill with milk. On an empty island a butterfly now and then lands on its nose, or it finds a daisy in the grass.
 
-Which animal the pet is, is its species (`PetSpecies`): it decides the sprite sheet the pet is drawn from, how it moves in a hurry, and how it plays each reaction and spends each mood. `IslandPet(species:)` pairs a species with its sheet. Both pets answer the same moments with reactions of the same name — `celebrate` is a wag for the dog and a flap for the penguin — each from a list of its own (`PetSpecies.reactions(to:)`), so what the island notices never depends on which pet is on it. The effects drawn beside the pet (`PetEffectArt.standard`) are shared by both.
+Settings › Pet chooses between them (`pet.species`, the dog by default).
+
+Which animal the pet is, is its species (`PetSpecies`): it decides the sprite sheet the pet is drawn from, how it moves in a hurry (`PetHurry`: running, sliding or skipping), whether its sit is already on the floor, and how it plays each reaction and spends each mood. `IslandPet(species:)` pairs a species with its sheet. Every pet answers the same moments with reactions of the same name — `celebrate` is a wag for the dog, a flap for the penguin and a buck for the cow — each from a list of its own (`PetSpecies.reactions(to:)`), so what the island notices never depends on which pet is on it. The effects drawn beside the pet (`PetEffectArt.standard`) are shared by all of them.
 
 ## Where the pet stands
 
@@ -63,11 +65,26 @@ Every frame on the ground stands on the same bottom row, and the pet's paws are 
 | `sit`, `sitBlink`, `sitNod`, `sitBeam`, `dazed`, `headset`, `headsetBlink`, `headsetNod`, `typing`, `typingLift`, `typingBlink`, `fishing`, `fishingBite`, `fishingBlink` | Sitting | Sat on its tail like the Linux logo, feet out in front: nodding to music, seeing stars, on a call, at the laptop, and fishing |
 | `lie`, `lieBlink`, `sleep`, `slide`, `onBack` | Lying | Watching the open island, napping, sliding on its belly, flat on its back after a fall |
 
-Both sheets draw the poses the machinery itself moves the pet through — standing, the walk, the crouch, the hop, sitting, lying, asleep, the shake, a headset and a crossed-out eye — under the same names, so getting from any pose to any other works the same for both. Beyond those, each sheet draws only its own poses.
+### The cow
+
+`PetSpriteSheet.cow` is a Holstein in profile with a chibi's big head. Its coat is white, which the Shiba's is not because a white dog beside the icons read as one more glyph; the cow's patches, pink muzzle, horns and bell keep it from reading as one. The patches are slate rather than black and lit where they meet the outline (`H`), for the same reason the penguin's coat is. `CowArt` and `CowBodyArt` build its frames the way the others are built (`PetArtComposer`): the head — horns, ear, face, muzzle and the bell under the chin — is one block laid over every standing and sitting body, so a blink, a smile, a moo or a chew is the head with a few pixels painted over, and lying lower or nodding is the same head laid a row or more further down. The poses that tilt the cow — kneeling, the stretch, the buck — are its head and body tilted column by column (`tilting`), with legs of their own under them, and on its back is the standing body turned upside down.
+
+| Frames | Posture | Used for |
+|---|---|---|
+| `stand`, `standBlink`, `strideA`, `strideB`, `shakeLeft`, `shakeRight`, `moo`, `beam`, `lookUp`, `holdDaisy`, `holdDaisyChew`, `snort`, `stompUp`, `graze`, `grazeChew`, `swayLeft`, `swayRight`, `danceLeft`, `danceRight`, `tailSwishA`, `tailSwishB`, `bellLeft`, `bellRight`, `buck` | Standing | The walk, mooing, beaming, catching and chewing a daisy, snorting and stamping a hoof, grazing, swaying to music, dancing, swishing its tail, ringing its bell, and bucking |
+| `crouch` | Crouching | Down on its front knees, the rear still up: how it lies down and gets up |
+| `hop` | In the air | Every hop and every skip |
+| `playBow` | Bowing | The stretch on waking, front legs out along the floor |
+| `sit`, `sitBlink`, `sitNod`, `sitWag`, `sitBeam`, `sitMoo`, `sitPant`, `sitChewA`, `sitChewB`, `yawn`, `dazed`, `earsBack`, `noseLook`, `headset`, `headsetBlink`, `headsetNod`, `typing`, `typingLift`, `typingBlink`, `pailLow`, `pailHalf`, `pailFull`, `pailBeam`, `pailBlink`, `pailNudge` | Sitting | Lying with its legs folded under it, head up: chewing the cud, nodding to music, a happy moo, a butterfly on its nose, on a call, at the laptop, and beside its pail of milk |
+| `lie`, `lieBlink`, `sleep`, `lieSad`, `onBack` | Lying | The head down: watching the open island, napping, sulking, and on its back with its legs in the air |
+
+The cow's sit is already on the floor (`PetSpecies.sitsOnTheFloor`), so it lies down from there, and sits back up, without getting up in between; getting up from either it comes up off its knees.
+
+Every sheet draws the poses the machinery itself moves the pet through — standing, the walk, the crouch, the hop, sitting, lying, asleep, the shake, a headset and a crossed-out eye — under the same names, so getting from any pose to any other works the same for all of them. Beyond those, each sheet draws only its own poses.
 
 ### Effects
 
-The effects drawn beside the pet (`PetEffect`) are pixel art at the same density: an exclamation mark, a question mark, hearts, the Zs of a nap, stars and sparkles, a rain cloud and its drops, a note, a bolt, a bell, a bone, a fish, a snowflake, dust, water, sweat, earth, and the lines a bark or a squawk leaves in the air. They are glyphs of the pet's own, not SF Symbols, so they belong to the pet rather than to the island's icons.
+The effects drawn beside the pet (`PetEffect`) are pixel art at the same density: an exclamation mark, a question mark, hearts, the Zs of a nap, stars and sparkles, a rain cloud and its drops, a note, a bolt, a bell, a bone, a fish, a snowflake, dust, water, sweat, earth, a fly, a butterfly, a daisy, a puff of steam, a drop of milk, the ring of a collar bell, and the lines a bark, a squawk or a moo leaves in the air. They are glyphs of the pet's own, not SF Symbols, so they belong to the pet rather than to the island's icons.
 
 ## The routine
 
@@ -76,10 +93,10 @@ The effects drawn beside the pet (`PetEffect`) are pixel art at the same density
 | Motion | Pace |
 |---|---|
 | Walk | 15 points a second, one point per step; legs change every 2/15 s |
-| Run — out of an icon's way, off the island, or for joy | 30 points a second; legs change every 1/15 s. The penguin drops through the crouch onto its belly and slides instead, at the same pace, and gets up at the end |
+| Run — out of an icon's way, off the island, or for joy | 30 points a second; legs change every 1/15 s. The penguin drops through the crouch onto its belly and slides instead, at the same pace, and gets up at the end. The cow runs with a skip every six steps — four steps in the air, up to two points high — begun only where it lands before the end |
 | Hop | A crouch, a third of a second in the air along a sine arc a few points high, a crouch to land |
 | Turn | On the spot, standing square — a sitting pet stands up first, a leg mid-stride comes back under it — then held 0.15 s. A sitting pet looking the other way for a moment glances instead: the sitting frame, mirrored in place |
-| Sit down, stand up, lie down | Through `crouch`, held 0.12 s |
+| Sit down, stand up, lie down | Through `crouch`, held 0.12 s. The cow lies down from its sit, and sits back up, without it |
 
 The loop follows the pet's **mood** (`PetMood`), read from the island at every refresh (`PetCueReader`), strongest first:
 
@@ -89,8 +106,8 @@ The loop follows the pet's **mood** (`PetMood`), read from the island at every r
 | Asking | An agent is waiting on the user | A question mark over its head the whole time, and every few seconds the gesture it chose when the question came |
 | Napping | An agent is out of quota | Asleep where it lay down, Zs drifting up, until the quota is back |
 | On a call | A Discord call is going on | Sitting with a headset on, nodding now and then |
-| Digging | An agent is working | Sitting a while, then digging in for a moment, earth flying back between its hind legs. The penguin types at a laptop, a prompt on its screen, or fishes through a hole in the ice until something bites and a fish leaps out and back |
-| Listening | Music is playing | Sitting, and every few seconds nodding along with notes rising. The penguin nods along too, or stands and sways from foot to foot |
+| Digging | An agent is working | Sitting a while, then digging in for a moment, earth flying back between its hind legs. The penguin types at a laptop, a prompt on its screen, or fishes through a hole in the ice until something bites and a fish leaps out and back. The cow types at a laptop on the floor, or watches milk drip into a pail under its muzzle until it spills over, beams at it and nudges it empty |
+| Listening | Music is playing | Sitting, and every few seconds nodding along with notes rising. The penguin and the cow nod along too, or stand and sway from foot to foot |
 | Idle | Nothing is on the island | The stage's own loop, and after five minutes a nap |
 | Calm | Anything else | The stage's own loop |
 
@@ -101,11 +118,13 @@ The loop follows the pet's **mood** (`PetMood`), read from the island at every r
 
 The penguin's stage loops follow the same plan: it waddles where the dog strolls, and between sits it stands for a flap of its flippers or to preen. On an empty island it now and then spends a loop out in the snow — flakes drifting down around it until it looks up and catches one in its beak — about once a minute (`PenguinLoops.idleLoop`).
 
-Where the penguin knows more than one way of spending a mood — music heard nodding or swaying, an agent kept company at the laptop or over the ice — the tracker picks one at random when the mood begins and keeps it while the mood lasts (`PetPastime`). A mood spent only one way rolls no die, so the dog's choices are exactly what they were before the penguin came.
+The cow's stage loops follow the plan too: it ambles where the dog strolls, chews its cud and flicks its tail between sits, and lies with its legs folded wherever the dog sits. On an empty island, every second time round its loop, it has a visitor — a butterfly that flutters down onto its nose, which it watches cross-eyed until it flies off, then a daisy in the grass that it gets up to crop and chew — so one or the other comes about every forty seconds (`CowLoops.idleLoop`).
+
+Where the penguin or the cow knows more than one way of spending a mood — music heard nodding or swaying, an agent kept company at the laptop, over the ice or beside the pail — the tracker picks one at random when the mood begins and keeps it while the mood lasts (`PetPastime`). A mood spent only one way rolls no die, so the dog's choices are exactly what they were before the penguin came.
 
 Every loop sits for most of its length. A pet that never stopped moving would be a distraction on the edge of the screen, and sitting is when the pet asks nothing of the display. Beside a single icon every loop and every reaction keeps to the middle of the pet's place; with the flank to itself the pet sits at a home a little in from the edge.
 
-**The nap.** When the island empties, the routine planned at that moment plays the stage's loop for five minutes (`PetRoutineTracker.napDelay`) — counted from the island emptying, or from the pet last being petted, and rounded up to the end of the loop it is in, so up to twenty seconds more, or a little over a minute for the penguin's snowy loop — then lies the pet down and loops it asleep. The five minutes are part of the entrance Core Animation plays, so no timer puts the pet to sleep. Anything arriving on the island wakes it: it blinks, gets up, stretches — into a bow, or with its flippers swept back — and yawns before its new routine; news wakes it straight into its reaction instead.
+**The nap.** When the island empties, the routine planned at that moment plays the stage's loop for five minutes (`PetRoutineTracker.napDelay`) — counted from the island emptying, or from the pet last being petted, and rounded up to the end of the loop it is in, so up to twenty seconds more, a little over a minute for the penguin's snowy loop, or about eighty seconds for the cow's — then lies the pet down and loops it asleep. The five minutes are part of the entrance Core Animation plays, so no timer puts the pet to sleep. Anything arriving on the island wakes it: it blinks, gets up, stretches — into a bow, or with its flippers swept back — and yawns before its new routine; news wakes it straight into its reaction instead. The cow stretches into a bow as the dog does.
 
 ## Reactions
 
@@ -137,6 +156,19 @@ Something happening on the island (`PetMoment`) is answered with a reaction (`Pe
 | The CPU watchdog's notice | Fanning itself with a bead of sweat |
 | The pointer moves onto the pet | Flapping for joy, with hearts floating up |
 
+| Moment | The cow's reactions |
+|---|---|
+| The island opens | A startled hop under an exclamation mark · running with the island's edge to its new corner, skipping · lying down to watch · a long moo of hello, notes rising |
+| The island closes | Shaking the water off · a stretch into a bow, and a yawn · chewing its cud · a fly buzzing round its rump, swatted at with the tail until it flies off |
+| An agent asks something | Mooing for the user · ringing the bell on its collar, the head swinging and the bell ringing out either side — each with a question mark |
+| An agent fails | Seeing stars · keeling over onto its back, legs in the air and stars round its head, then up and shaking it off · ears down, then lying under a rain cloud · steam snorted from its nostrils and a hoof stamped |
+| An agent runs out of quota | Ears down, a yawn, and down to sleep until the quota is back |
+| An agent finishes (not a sub-agent) | Hops and bucks for joy among sparkles · catching a daisy that drops into its mouth and chewing it happily · a dance from hoof to hoof, the bell ringing |
+| A countdown runs out | Mooing at a bell ringing over its head |
+| The charger goes in | A bolt, a hop and a skipping run out and back |
+| The CPU watchdog's notice | Panting with its tongue out and a bead of sweat · fanning itself with its tail, sweating |
+| The pointer moves onto the pet | Its tail flicking, hearts floating up · its eyes shut with delight and a soft moo, hearts floating up |
+
 News is an arrival — a state entered, a notice appearing, the island opening — never a state held: agents repeat their state freely, and a pet that reacted to every repetition would never stop. The island opening and closing happen whenever the pointer passes over it, so they are answered only now and then: about one time in four, never twice within a minute, and never the same way twice running. The pointer passing over the pet wags it once, not continuously (eight seconds between). Reactions that need room to run — zoomies, running or sliding with the edge — are left out beside an icon.
 
 `PetRoutineTracker`, held for the presenter by `IslandPetKeeper`, decides what cuts in on what:
@@ -156,7 +188,7 @@ The pet is a `CALayer` in `PetLayerHostView`, with a layer for each effect of it
 - **No work in KerNotch per frame.** The routine plays in the render server. There is no timer, no task, no display link, and no SwiftUI animation; the view's body is evaluated only when the routine, the placement or the motion setting changes. Source tests keep clocks out of every file that draws or plans the pet.
 - **No wake-ups.** The pet's mood and news are read on refreshes the island already makes for its activities, the pointer moving onto the pet is noticed by a tracking area only while the pointer is over the island, and the nap is part of the routine: nothing wakes KerNotch to keep the pet going.
 - **A low frame rate.** Every animation asks for 15 frames a second (`PetAnimation.frameRateRange`) — the walk's step rate — and allows at most 30, so on a ProMotion panel the pet never holds the display at 120 Hz, and the long sits cost the render server a fraction of a full-rate animation. A run is then drawn two points at a time, which pixel art carries well.
-- **Tiny images.** Each frame the pet's sheet draws is drawn once into a 32 × 24 image, for both facings, and each effect once as drawn and mirrored: a few hundred kilobytes for the whole pet, kept for the app's lifetime. The other pet's poses are never drawn.
+- **Tiny images.** Each frame the pet's sheet draws is drawn once into a 32 × 24 image, for both facings, and each effect once as drawn and mirrored: a few hundred kilobytes for the whole pet, kept for the app's lifetime. The other pets' poses are never drawn.
 - **Never resampled.** Shown pixel for pixel on a Retina panel, and held at that size through the hover peek, which scales the rest of the island: the pet rides the peek's movement with the peek's scale undone (`islandHoverScale`, `islandPeekCounterScale(for:)`).
 - **Nothing runs when there is nothing to see.** The island hidden or asleep, or the pet away once it has left: no animation is attached.
 
@@ -164,11 +196,11 @@ With motion reduced — by the system's Reduce Motion or by KerNotch's own Motio
 
 ## Settings
 
-Settings › Pet has one switch, "Show the pet on the island" (`pet.enabled`, default off — see `08-settings-and-localization.md`), a choice of animal, Dog or Penguin (`pet.species`, default the dog), and a strip of island black with the chosen pet walking in and then its roaming routine, afresh whenever the choice changes, dimmed while the switch is off. Both apply live on the island: the pill widens and the pet walks in, or the pill narrows and the pet goes; picking the other pet swaps them, the new one walking in from the island's edge (`IslandPetKeeper` starts a new life for a new species rather than playing the old one's routine in the new one's poses). The reactions come with the pet and have no switches of their own.
+Settings › Pet has one switch, "Show the pet on the island" (`pet.enabled`, default off — see `08-settings-and-localization.md`), a choice of animal, Dog, Penguin or Cow (`pet.species`, default the dog), and a strip of island black with the chosen pet walking in and then its roaming routine, afresh whenever the choice changes, dimmed while the switch is off. Both apply live on the island: the pill widens and the pet walks in, or the pill narrows and the pet goes; picking the other pet swaps them, the new one walking in from the island's edge (`IslandPetKeeper` starts a new life for a new species rather than playing the old one's routine in the new one's poses). The reactions come with the pet and have no switches of their own.
 
 ## Tests
 
-- `KerNotchCoreTests` — the stage rule, the stage geometry on the pill and the open island, every frame's shape, palette and posture, mirroring, the effects' art; the routine invariants: entrances begin in place and end on the loop's opening pose, the pet never moves more than a point between keyframes, turns happen on the spot, loops close seamlessly, roaming covers the flank and resting never leaves its place, sitting takes most of each loop; every reaction from every kind of pose on both stages — back on the floor, in the air only mid-hop, effects kept to the reaction, never off its stage; every mood's loop, the question mark held while an agent waits, the nap after five minutes, waking up, carrying a reaction into a new mood; the tracker's rules — news held or let go by urgency, the island answered about one time in four with its cooldown and variety, stage changes, a reaction carried across the island opening, the petting cooldown, the question's gesture kept; and the cues read from activities. Every invariant of the reactions runs for both pets; the penguin's own suites check its art (a blink touches only the eyes, one foot off the floor mid-waddle, a coat that shows on black), its belly slide, each of its reactions and pastimes, its snow and nap, that every pose it is ever shown in is on its sheet, and the tracker's pick of a pastime.
+- `KerNotchCoreTests` — the stage rule, the stage geometry on the pill and the open island, every frame's shape, palette and posture, mirroring, the effects' art; the routine invariants: entrances begin in place and end on the loop's opening pose, the pet never moves more than a point between keyframes, turns happen on the spot, loops close seamlessly, roaming covers the flank and resting never leaves its place, sitting takes most of each loop; every reaction from every kind of pose on both stages — back on the floor, in the air only mid-hop, effects kept to the reaction, never off its stage; every mood's loop, the question mark held while an agent waits, the nap after five minutes, waking up, carrying a reaction into a new mood; the tracker's rules — news held or let go by urgency, the island answered about one time in four with its cooldown and variety, stage changes, a reaction carried across the island opening, the petting cooldown, the question's gesture kept; and the cues read from activities. Every invariant of the reactions runs for every pet; the penguin's own suites check its art (a blink touches only the eyes, one foot off the floor mid-waddle, a coat that shows on black), its belly slide, each of its reactions and pastimes, its snow and nap, that every pose it is ever shown in is on its sheet, and the tracker's pick of a pastime. The cow's do the same for it — a blink that touches only the eye, a walk that moves only the legs, lying lower than it stands, a pail that fills from the bottom, its skipping run landing before the end at any length, lying down from its sit without kneeling, its butterfly and daisy, its pail filling and emptying — and check that every pose on its sheet is played somewhere.
 - `KerNotchUITests` — icons are placed exactly as without a pet, the pill keeps its width beside the pet, the hover target covers the pet's flank, the images match the art, the pet stands on the icons' baseline, the animation tracks and their key times, effect layers and their tracks, the frame-rate cap, arming only in a window, resuming mid-loop, stillness under Reduce Motion, noticing the pointer only over the pet, the open island's wider stage, the keeper — a swapped pet walking in afresh — and the Pet pane with its switch and its picker.
 - `KerNotchTests` — the pet is drawn on the compact and the open island, and the composition root wires it through (`PetWiringTests`).
 
