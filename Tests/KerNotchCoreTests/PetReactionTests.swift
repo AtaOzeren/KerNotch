@@ -10,8 +10,9 @@ struct PetReactionTests {
     static let geometry = IslandPet.shiba.stageGeometry()
     static let openGeometry = IslandPet.shiba.openIslandStageGeometry(stripWidth: 85)
 
-    /// Sitting, walking, in the air, asleep, bowed or on its belly, facing
-    /// either way, at both ends of the flank — each in the poses that pet has.
+    /// Sitting, walking, in the air, asleep, bowed, on its belly or its back,
+    /// facing either way, at both ends of the flank — each in the poses that
+    /// pet has.
     static func startingPoses(for species: PetSpecies) -> [PetPose] {
         switch species {
         case .dog:
@@ -35,6 +36,18 @@ struct PetReactionTests {
                 PetPose(position: 9, facing: .right, frame: .sleep),
                 PetPose(position: 17, facing: .left, frame: .slide),
                 PetPose(position: 3, facing: .right, frame: .crouch),
+            ]
+        case .cow:
+            [
+                PetPose(position: 6, facing: .right, frame: .sit),
+                PetPose(position: 0, facing: .left, frame: .sitChewA),
+                PetPose(position: 20, facing: .right, frame: .strideA),
+                PetPose(position: 34, facing: .left, frame: .stand),
+                PetPose(position: 12, lift: 3, facing: .right, frame: .hop),
+                PetPose(position: 9, facing: .right, frame: .sleep),
+                PetPose(position: 17, facing: .left, frame: .playBow),
+                PetPose(position: 3, facing: .right, frame: .crouch),
+                PetPose(position: 5, facing: .right, frame: .onBack),
             ]
         }
     }

@@ -112,16 +112,20 @@ struct IslandPetDrawingTests {
         }
     }
 
-    /// A pet's images are only the poses it takes: the other pet's are never
+    /// A pet's images are only the poses it takes: the other pets' are never
     /// shown, so they are never drawn.
     @Test("a pet's images are only its own poses")
     func onlyItsOwnPosesAreDrawn() {
         let dog = PetSpriteImages.images(for: PetSpriteSheet.shiba)
         let penguin = PetSpriteImages.images(for: PetSpriteSheet.penguin)
+        let cow = PetSpriteImages.images(for: PetSpriteSheet.cow)
 
         #expect(dog.image(for: .slide, facing: .right) == nil)
         #expect(penguin.image(for: .playBow, facing: .right) == nil)
         #expect(penguin.image(for: .slide, facing: .right) != nil)
+        #expect(cow.image(for: .slide, facing: .right) == nil)
+        #expect(cow.image(for: .buck, facing: .right) != nil)
+        #expect(dog.image(for: .buck, facing: .right) == nil)
     }
 
     // MARK: - Placement
@@ -387,6 +391,10 @@ struct IslandPetDrawingTests {
             "Sources/KerNotchCore/PetReactionScripts.swift",
             "Sources/KerNotchCore/PetRoutine.swift",
             "Sources/KerNotchCore/PetRoutineTracker.swift",
+            "Sources/KerNotchCore/PenguinLoops.swift",
+            "Sources/KerNotchCore/PenguinReactionScripts.swift",
+            "Sources/KerNotchCore/CowLoops.swift",
+            "Sources/KerNotchCore/CowReactionScripts.swift",
         ]
     )
     func noClockOfItsOwn(path: String) throws {
@@ -436,6 +444,9 @@ struct PetSettingsViewTests {
         view.species.wrappedValue = .penguin
         #expect(box.value.species == .penguin)
         #expect(box.value.isEnabled == false)
+
+        view.species.wrappedValue = .cow
+        #expect(box.value.species == .cow)
 
         view.species.wrappedValue = .dog
         #expect(box.value.species == .dog)

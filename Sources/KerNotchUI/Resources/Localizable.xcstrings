@@ -6512,7 +6512,7 @@
       }
     },
     "Animal": {
-      "comment": "Pet pane: picker choosing which pet lives on the island, a dog or a penguin.",
+      "comment": "Pet pane: picker choosing which pet lives on the island, a dog, a penguin or a cow.",
       "extractionState": "manual",
       "localizations": {
         "en": {
