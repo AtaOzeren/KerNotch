@@ -13,9 +13,9 @@ final class KerNotchAppUITests: XCTestCase {
         statusItem.menuItems["Settings…"].click()
 
         XCTAssertTrue(app.windows.firstMatch.waitForExistence(timeout: 10))
-        XCTAssertTrue(app.staticTexts["Display"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Island"].exists)
-        XCTAssertTrue(app.staticTexts["Startup"].exists)
+        XCTAssertTrue(app.staticTexts["Display:"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Island size:"].exists)
+        XCTAssertTrue(app.staticTexts["Startup:"].exists)
         XCTAssertTrue(app.staticTexts["Launch at login"].exists)
     }
 }

@@ -34,7 +34,7 @@ public enum SettingsTab: String, CaseIterable, Equatable, Hashable, Sendable {
     }
 }
 
-/// The settings window's content: the panes behind a `TabView`.
+/// The settings window's content: the tab bar, and the chosen pane under it.
 ///
 /// It holds no preference state of its own — every pane binds straight through
 /// to the composition root's values, so the window is a layout decision and the
@@ -68,6 +68,9 @@ public struct SettingsWindowView: View {
     private let onDiscordAction: (DiscordSettingsAction) -> Void
 
     @State private var selectedTab: SettingsTab = .general
+    /// The visible height of the screen the window is on, once the window
+    /// reports it; a pane is capped to what that screen can show.
+    @State private var visibleScreenHeight: CGFloat?
 
     public init(
         general: Binding<GeneralPreferences>,
@@ -125,18 +128,19 @@ public struct SettingsWindowView: View {
     }
 
     public var body: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(visibleTabs, id: \.self) { tab in
+        VStack(spacing: 0) {
+            SettingsTabBar(selection: $selectedTab, tabs: visibleTabs)
+            SettingsPaneFitting(maximumHeight: metrics.paneCeiling(onScreenOfHeight: visibleScreenHeight)) {
                 ScrollView {
-                    pane(for: tab)
+                    pane(for: selectedTab)
                 }
-                .tabItem {
-                    Label(tab.displayName, systemImage: tab.symbolName)
-                }
-                .tag(tab)
             }
         }
         .frame(width: metrics.width)
+        .background(SettingsPalette.windowBackground.color.ignoresSafeArea())
+        .toolbarBackground(.hidden, for: .windowToolbar)
+        .settingsWindowTitleHidden()
+        .background(SettingsWindowChrome { visibleScreenHeight = $0 })
     }
 
     @ViewBuilder
@@ -189,6 +193,23 @@ public struct SettingsWindowView: View {
                 metrics: metrics,
                 restartRequired: restartRequired
             )
+        }
+    }
+}
+
+extension View {
+    /// Leaves the title bar to the traffic lights, as the design draws it. The
+    /// window keeps its title for the Window menu and VoiceOver.
+    ///
+    /// SwiftUI owns the title bar once it manages the toolbar background, so on
+    /// macOS 15 and later the title is removed through SwiftUI, and
+    /// `SettingsWindowChrome` touches the window only on macOS 14.
+    @ViewBuilder
+    fileprivate func settingsWindowTitleHidden() -> some View {
+        if #available(macOS 15.0, *) {
+            toolbar(removing: .title)
+        } else {
+            self
         }
     }
 }

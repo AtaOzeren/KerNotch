@@ -143,7 +143,7 @@ struct KerNotchApp: App {
         var initialGeneralPreferences = settingsStore.generalPreferences
         initialGeneralPreferences.displayTarget = normalizeDisplayPreference(
             initialGeneralPreferences.displayTarget,
-            availableDisplayCount: currentDisplays.count
+            availableDisplays: currentDisplays
         )
         initialGeneralPreferences.appearance = .dark
         if isSettingsFileUsable == false {
@@ -659,7 +659,7 @@ struct KerNotchApp: App {
         .onChange(of: displayInventory.displays) { _, displays in
             generalPreferences.displayTarget = normalizeDisplayPreference(
                 generalPreferences.displayTarget,
-                availableDisplayCount: displays.count
+                availableDisplays: displays
             )
         }
         .onChange(of: enabledIdentifiers) { _, identifiers in

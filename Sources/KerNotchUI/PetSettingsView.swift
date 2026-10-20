@@ -2,7 +2,7 @@ import KerNotchCore
 import SwiftUI
 
 /// The Pet pane: whether a pet lives on the island and which one, with the
-/// pet itself walking beside the switch.
+/// chosen pet walking under the animal picker.
 ///
 /// Like every other pane it owns no preference state — it edits the binding
 /// the composition root hands it.
@@ -39,25 +39,27 @@ public struct PetSettingsView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-            SettingsSection(
-                title: localized("Island pet"),
+            SettingsFormRow(
+                localized("Island pet"),
                 caption: localized(
                     "A small pixel pet lives on the island's left side. It steps aside for an activity and leaves when no room is left."
                 ),
                 metrics: metrics
             ) {
                 Toggle(localized("Show the pet on the island"), isOn: isEnabled)
+            }
+            SettingsFormRow(
+                localized("Animal"),
+                caption: localized("The pet sits still while motion is reduced."),
+                metrics: metrics
+            ) {
                 Picker(localized("Animal"), selection: species) {
                     ForEach(PetSpecies.allCases, id: \.self) { species in
                         Text(species.displayName).tag(species)
                     }
                 }
-                .pickerStyle(.segmented)
+                .settingsSegmentedPicker()
                 preview
-                Text(localized("The pet sits still while motion is reduced."))
-                    .font(.system(size: metrics.footnoteSize))
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .settingsPaneFrame(metrics)

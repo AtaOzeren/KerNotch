@@ -2,7 +2,7 @@
   "sourceLanguage": "en",
   "strings": {
     "Application": {
-      "comment": "General pane, application lifecycle section title.",
+      "comment": "General pane row label (followed by a colon) in front of the restart notice and the Restart KerNotch button.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -254,7 +254,7 @@
       }
     },
     "A disabled event never reaches the notch — it is dropped on arrival.": {
-      "comment": "AI Integrations pane, Events section caption.",
+      "comment": "AI Integrations pane, caption under the event checkboxes.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -296,7 +296,7 @@
       }
     },
     "A switched-off activity stops being observed, not just hidden.": {
-      "comment": "Activities pane, Activities section caption.",
+      "comment": "Activities pane, caption under the activity checkboxes.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -506,7 +506,7 @@
       }
     },
     "Activities": {
-      "comment": "Settings window tab, and the section title within it.",
+      "comment": "Settings window tab, and the row label (followed by a colon) in front of the per-activity checkboxes.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -548,7 +548,7 @@
       }
     },
     "Agents": {
-      "comment": "AI Integrations pane, Agents section title.",
+      "comment": "AI Integrations pane row label (followed by a colon) in front of the per-agent checkboxes.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -627,48 +627,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lingua dell'app"
-          }
-        }
-      }
-    },
-    "Appearance": {
-      "comment": "General pane, Appearance section title.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appearance"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Görünüm"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erscheinungsbild"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aspecto"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apparence"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aspetto"
           }
         }
       }
@@ -758,7 +716,7 @@
       }
     },
     "Automatic follows the display with the notch, then falls back to the built-in screen.": {
-      "comment": "General pane, Display section caption.",
+      "comment": "General pane, caption under the display picker.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1178,7 +1136,7 @@
       }
     },
     "Display": {
-      "comment": "General pane, Display section title.",
+      "comment": "General pane row label (followed by a colon) in front of the display picker.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1262,7 +1220,7 @@
       }
     },
     "Events": {
-      "comment": "AI Integrations pane, Events section title.",
+      "comment": "AI Integrations pane row label (followed by a colon) in front of the per-event checkboxes.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1346,7 +1304,7 @@
       }
     },
     "General": {
-      "comment": "Settings window tab: display, startup, and appearance.",
+      "comment": "Settings window tab: display, island size, full screen, menu bar icon, motion, and startup.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1430,7 +1388,7 @@
       }
     },
     "Language": {
-      "comment": "About pane, Language section title.",
+      "comment": "About pane row label (followed by a colon) in front of the app language picker.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1514,7 +1472,7 @@
       }
     },
     "MIT licensed. Music is read through the backend this build was compiled against.": {
-      "comment": "About pane, build section caption.",
+      "comment": "About pane, caption under the Version and Music backend rows.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1682,7 +1640,7 @@
       }
     },
     "Music control": {
-      "comment": "Activities pane, Apple Events section title.",
+      "comment": "Activities pane row label (followed by a colon) in front of the per-player Apple Events permission rows.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1849,48 +1807,6 @@
         }
       }
     },
-    "KerNotch": {
-      "comment": "About pane, build section title. The application name — normally left untranslated.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KerNotch"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KerNotch"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KerNotch"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KerNotch"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KerNotch"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "KerNotch"
-          }
-        }
-      }
-    },
     "KerNotch asks for nothing right now. Each permission is requested only when you turn on the feature that needs it, and only after KerNotch explains what it is about to ask for.": {
       "comment": "Onboarding step 2 body.",
       "extractionState": "manual",
@@ -1934,7 +1850,7 @@
       }
     },
     "KerNotch asks macOS for each player separately, and only when you press the button.": {
-      "comment": "Activities pane, Apple Events section caption.",
+      "comment": "Activities pane, caption under the Apple Events permission rows.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2018,7 +1934,7 @@
       }
     },
     "KerNotch has no Dock icon. Open the app again to show Settings when its menu bar icon is hidden.": {
-      "comment": "General pane, Startup section caption.",
+      "comment": "General pane, caption under the Launch at login checkbox.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2102,7 +2018,7 @@
       }
     },
     "KerNotch shows nothing for an agent until you enable it here.": {
-      "comment": "AI Integrations pane, Agents section caption.",
+      "comment": "AI Integrations pane, caption under the agent rows.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2816,7 +2732,7 @@
       }
     },
     "Reduced motion also follows the system accessibility setting unless you override it.": {
-      "comment": "General pane, Appearance section caption.",
+      "comment": "General pane, caption under the Motion picker.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2858,7 +2774,7 @@
       }
     },
     "Show menu bar icon": {
-      "comment": "General pane, Appearance section toggle for the AppKit status item.",
+      "comment": "General pane, Menu bar row checkbox for the AppKit status item.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -3194,7 +3110,7 @@
       }
     },
     "Startup": {
-      "comment": "General pane, Startup section title.",
+      "comment": "General pane row label (followed by a colon) in front of the Launch at login checkbox.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -3362,7 +3278,7 @@
       }
     },
     "Takes effect the next time KerNotch starts.": {
-      "comment": "About pane, Language section caption.",
+      "comment": "About pane, caption under the app language picker.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -4916,7 +4832,7 @@
       }
     },
     "Island glow": {
-      "comment": "AI Integrations pane, attention glow section title.",
+      "comment": "AI Integrations pane row label (followed by a colon) in front of the attention glow checkbox and its test button.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -4958,7 +4874,7 @@
       }
     },
     "A soft light runs around the small island when an agent finishes, asks for input, or fails.": {
-      "comment": "AI Integrations pane, attention glow section caption.",
+      "comment": "AI Integrations pane, caption under the attention glow row.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -5336,7 +5252,7 @@
       }
     },
     "Discord": {
-      "comment": "Integrations pane, Discord section title. The product name.",
+      "comment": "Integrations pane row label (followed by a colon) in front of the Discord checkbox. The product name.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -5378,7 +5294,7 @@
       }
     },
     "Shows Discord voice calls on the island in place of the microphone indicator.": {
-      "comment": "Integrations pane, Discord section caption.",
+      "comment": "Integrations pane, caption under the Discord checkbox.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -5546,7 +5462,7 @@
       }
     },
     "Voice channel": {
-      "comment": "Integrations pane, section title for the optional Discord connection that names the voice channel.",
+      "comment": "Integrations pane row label (followed by a colon) for the optional Discord connection that names the voice channel.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -6008,7 +5924,7 @@
       }
     },
     "Connect Discord to see the channel name and leave the channel from the island. Discord asks you to approve KerNotch once.": {
-      "comment": "Integrations pane, caption of the Discord connection section.",
+      "comment": "Integrations pane, caption under the Discord connection row.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -6133,48 +6049,6 @@
         }
       }
     },
-    "Island": {
-      "comment": "General pane: section title for how the expanded island is sized.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Island"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ada"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Insel"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Isla"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Îlot"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Isola"
-          }
-        }
-      }
-    },
     "Island size": {
       "comment": "General pane: picker choosing between the minimalist and the large expanded island.",
       "extractionState": "manual",
@@ -6218,7 +6092,7 @@
       }
     },
     "Hide in full screen and Mission Control": {
-      "comment": "General pane, Island section toggle: the island steps aside while an app is in full screen or Mission Control is open.",
+      "comment": "General pane, Full screen row checkbox: the island steps aside while an app is in full screen or Mission Control is open.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -6260,7 +6134,7 @@
       }
     },
     "Large widens the island that opens on hover and enlarges its text and controls.": {
-      "comment": "General pane, Island section caption: what the Large island size changes.",
+      "comment": "General pane, caption under the Island size picker: what the Large island size changes.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -6344,7 +6218,7 @@
       }
     },
     "Island pet": {
-      "comment": "Pet pane: section title.",
+      "comment": "Pet pane row label (followed by a colon) in front of the Show the pet checkbox.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -6470,7 +6344,7 @@
       }
     },
     "A small pixel pet lives on the island's left side. It steps aside for an activity and leaves when no room is left.": {
-      "comment": "Pet pane: section caption describing how the pet shares the island's left side with activity icons.",
+      "comment": "Pet pane, caption under the Show the pet checkbox describing how the pet shares the island's left side with activity icons.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -6549,6 +6423,216 @@
           "stringUnit": {
             "state": "translated",
             "value": "Animale"
+          }
+        }
+      }
+    },
+    "settings.form.label": {
+      "comment": "Settings window: a row label in the trailing-aligned label column, the title followed by a colon. Named rather than keyed on its English because a punctuation-only key has no valid Swift symbol.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@:"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@:"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@:"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@:"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ :"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@:"
+          }
+        }
+      }
+    },
+    "Full screen": {
+      "comment": "General pane row label in front of the \"Hide in full screen and Mission Control\" checkbox.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full screen"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tam ekran"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollbild"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pantalla completa"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plein écran"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schermo intero"
+          }
+        }
+      }
+    },
+    "Menu bar": {
+      "comment": "General pane row label in front of the \"Show menu bar icon\" checkbox.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menu bar"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menü çubuğu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menüleiste"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barra de menús"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barre des menus"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barra dei menu"
+          }
+        }
+      }
+    },
+    "Hook installed": {
+      "comment": "AI Integrations pane: status beside an agent whose configuration already carries the KerNotch hook.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook installed"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook kurulu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook installiert"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook instalado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook installé"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook installato"
+          }
+        }
+      }
+    },
+    "Hook not installed": {
+      "comment": "AI Integrations pane: status beside an agent whose configuration does not carry the KerNotch hook yet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook not installed"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook kurulu değil"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook nicht installiert"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook no instalado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook non installé"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hook non installato"
           }
         }
       }

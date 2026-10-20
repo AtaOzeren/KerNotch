@@ -65,7 +65,6 @@ struct LocalizationTests {
     @Test("the island size control is fully Turkish")
     func islandSizeSettingIsTurkish() throws {
         try withTurkishBundle(for: "Sources/KerNotchUI/Resources/Localizable.xcstrings") { bundle in
-            #expect(bundle.localizedString(forKey: "Island", value: nil, table: nil) == "Ada")
             #expect(bundle.localizedString(forKey: "Island size", value: nil, table: nil) == "Ada boyutu")
         }
         try withTurkishBundle(for: "Sources/KerNotchCore/Resources/Localizable.xcstrings") { bundle in
@@ -81,6 +80,34 @@ struct LocalizationTests {
                 bundle.localizedString(forKey: "Hide in full screen and Mission Control", value: nil, table: nil)
                     == "Tam ekranda ve Mission Control'de gizle"
             )
+        }
+    }
+
+    @Test("the settings form's new row labels and hook statuses are fully Turkish")
+    func settingsFormCopyIsTurkish() throws {
+        let expectedTranslations = [
+            "Full screen": "Tam ekran",
+            "Menu bar": "Menü çubuğu",
+            "Hook installed": "Hook kurulu",
+            "Hook not installed": "Hook kurulu değil",
+        ]
+
+        try withTurkishBundle(for: "Sources/KerNotchUI/Resources/Localizable.xcstrings") { bundle in
+            for (key, translation) in expectedTranslations {
+                #expect(bundle.localizedString(forKey: key, value: nil, table: nil) == translation)
+            }
+        }
+    }
+
+    /// French sets a colon off with a no-break space; the label column must not
+    /// glue it to the word the way English does.
+    @Test(
+        "a row label's colon follows each language's typography",
+        arguments: [("tr", "%@:"), ("de", "%@:"), ("fr", "%@\u{00A0}:")]
+    )
+    func formLabelColonFollowsTypography(language: String, expected: String) throws {
+        try withCompiledBundle(for: "Sources/KerNotchUI/Resources/Localizable.xcstrings", language: language) {
+            #expect($0.localizedString(forKey: "settings.form.label", value: nil, table: nil) == expected)
         }
     }
 
@@ -224,7 +251,6 @@ struct LocalizationTests {
     /// The exceptions are brand names and format-only strings, which have no
     /// words to translate, and loanwords Turkish spells exactly as English does.
     private static let untranslatableKeys: Set<String> = [
-        "KerNotch",
         "Discord",
         "Minimalist",
         "Pet",
@@ -234,6 +260,7 @@ struct LocalizationTests {
         "activity.ai.sessionCountOverflow",
         "activity.ai.sessionName",
         "manualSetup.stepNumber",
+        "settings.form.label",
     ]
 
     @Test("no key ships English under the Turkish locale", arguments: catalogs)
