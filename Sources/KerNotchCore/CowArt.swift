@@ -126,7 +126,7 @@ enum CowArt {
         stamping(
             shifting(head, by: columns),
             onto: shifting(emptyRows(6) + Array(standingBody.prefix(4)), by: -columns)
-                + standingBody.dropFirst(4) + standingLegs,
+                + Array(standingBody.dropFirst(4)) + standingLegs,
             column: 0,
             row: 0
         )
