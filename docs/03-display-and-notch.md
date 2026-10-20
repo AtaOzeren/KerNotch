@@ -54,6 +54,15 @@ Each handler re-runs the same pure selection-and-geometry pipeline; there is no 
 
 The default selection mode is **automatic**, which always means "the built-in display." Users may override this to a specific named display; when they do, KerNotch anchors to that display by name (`NSScreen.localizedName`) as long as it remains connected. KerNotch never migrates the island to a different display on its own initiative — if the selected display disconnects, it falls back to the built-in display and stays there until the user picks another target or the previously selected display reconnects.
 
+The choice is stored with the display's number (`NSScreenNumber`) and the name the Settings picker gave it — the display's own name, numbered "(1)", "(2)" in screen order when two connected displays share a model name (`displayLabels(for:)`). The number alone is not an identity: macOS hands display numbers out again across reconnects and sleep, so the monitor chosen as "2" can come back as "3" while "2" goes to another monitor. `selectDisplay` therefore resolves a stored choice in this order:
+
+1. the display that carries both the stored number and the stored name;
+2. otherwise the display that carries the stored name, under whatever number it has now;
+3. otherwise the display with the stored number, but only when that number's name is no guide — the built-in display, whose name follows the system language, or a display whose name has not resolved yet (the hotplug edge case below);
+4. otherwise the choice counts as disconnected and the fallback above applies. A stored number now held by another monitor is not followed onto it.
+
+Whenever the connected displays change, the stored choice is re-pointed at the number and picker name it resolved to (`normalizeDisplayPreference`), so the picker shows it selected and the corrected number is what gets saved. A choice whose display is away, or whose name has not resolved yet, is kept as it was for when that display returns.
+
 | Screens present | User setting | Target screen |
 |---|---|---|
 | Built-in only | Automatic | Built-in |

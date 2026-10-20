@@ -2,7 +2,7 @@ import Foundation
 
 /// The loops the pet repeats between reactions: the stage's own — strolling
 /// the flank, or sitting beside an icon — and one for each mood. The dog's are
-/// here; the penguin's are in `PenguinLoops`.
+/// here; the penguin's are in `PenguinLoops`, the cow's in `CowLoops`.
 ///
 /// Every loop ends in the pose it began with, so Core Animation can repeat it
 /// without a seam, and every loop sits for most of its length: a pet that
@@ -66,6 +66,12 @@ enum PetLoops {
             PenguinLoops.listening(direction.pastime ?? .nodding, at: home, spriteWidth: spriteWidth)
         case (.penguin, .digging):
             PenguinLoops.working(direction.pastime ?? .typing, at: home, spriteWidth: spriteWidth)
+        case (.cow, .asking):
+            CowLoops.asking(style: direction.askingStyle ?? .barkForAttention, at: home, spriteWidth: spriteWidth)
+        case (.cow, .listening):
+            CowLoops.listening(direction.pastime ?? .nodding, at: home, spriteWidth: spriteWidth)
+        case (.cow, .digging):
+            CowLoops.working(direction.pastime ?? .typing, at: home, spriteWidth: spriteWidth)
         default:
             nil
         }
@@ -76,15 +82,18 @@ enum PetLoops {
         switch species {
         case .dog: dogStageLoop(on: stage, in: geometry)
         case .penguin: PenguinLoops.stageLoop(on: stage, in: geometry)
+        case .cow: CowLoops.stageLoop(on: stage, in: geometry)
         }
     }
 
     /// What the pet does while the island stays empty, until it naps: the
-    /// stage's own loop, which the penguin now and then spends out in the snow.
+    /// stage's own loop, which the penguin now and then spends out in the snow
+    /// and the cow with a butterfly or a daisy.
     static func idleLoop(on stage: PetStage, in geometry: PetStageGeometry, species: PetSpecies) -> PetTimeline? {
         switch species {
         case .dog: dogStageLoop(on: stage, in: geometry)
         case .penguin: PenguinLoops.idleLoop(on: stage, in: geometry)
+        case .cow: CowLoops.idleLoop(on: stage, in: geometry)
         }
     }
 

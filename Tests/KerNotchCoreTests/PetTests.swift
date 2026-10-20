@@ -181,7 +181,8 @@ struct PetSpriteSheetTests {
             Set(PetFrame.allCases.filter(\.isSitting)) == [
                 .sit, .sitBlink, .sitPant, .sitWag, .sitNod, .bark, .yawn, .curious, .curiousLow, .earsBack,
                 .pawUp, .dazed, .holdBone, .holdBoneWag, .headset, .headsetBlink, .headsetNod, .sitBeam, .typing,
-                .typingLift, .typingBlink, .fishing, .fishingBite, .fishingBlink,
+                .typingLift, .typingBlink, .fishing, .fishingBite, .fishingBlink, .sitMoo, .sitChewA, .sitChewB,
+                .noseLook, .pailLow, .pailHalf, .pailFull, .pailBeam, .pailBlink, .pailNudge,
             ]
         )
     }
@@ -217,6 +218,13 @@ struct PetPreferencesTests {
     func pickedPenguinIsThePenguin() {
         #expect(PetPreferences(isEnabled: true, species: .penguin).pet == .penguin)
         #expect(PetPreferences(isEnabled: false, species: .penguin).pet == nil)
+    }
+
+    @Test("picking the cow puts the cow on the island, once it is switched on")
+    func pickedCowIsTheCow() {
+        #expect(PetPreferences(isEnabled: true, species: .cow).pet == .cow)
+        #expect(PetPreferences(isEnabled: false, species: .cow).pet == nil)
+        #expect(PetSpecies(rawValue: "cow") == .cow)
     }
 
     @Test("each pet is drawn from its own sheet, at the same size", arguments: PetSpecies.allCases)

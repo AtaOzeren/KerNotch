@@ -27,7 +27,7 @@ custom_rules:
   # first argument, and `systemImage:` is never linguistic.
   no_raw_string_in_views:
     name: "User-Visible String Literal in View"
-    regex: '\b(?:Text|Label|Button|Toggle|Picker|Stepper|Menu|Section|LabeledContent|NavigationLink|TextField|SettingsSection)\(\s*"'
+    regex: '\b(?:Text|Label|Button|Toggle|Picker|Stepper|Menu|Section|LabeledContent|NavigationLink|TextField|SettingsFormRow|SettingsCaption)\(\s*"'
     message: "Avoid raw string literals in SwiftUI views; use localized(\"…\") so the string ships through the String Catalog."
     severity: error
   no_raw_string_in_view_modifier:

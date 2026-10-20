@@ -24,6 +24,14 @@ public enum PetEffect: String, CaseIterable, Sendable {
     case dirt
     case fish
     case snowflake
+    case fly
+    case butterfly
+    case daisy
+    /// A puff snorted from the nostrils.
+    case steam
+    case milk
+    /// The ring of a bell worn on a collar, pointing away from it.
+    case jingle
 }
 
 /// The art the effects are drawn from: each one as rows of palette keys, at
@@ -70,7 +78,8 @@ public struct PetEffectArt: Hashable, Sendable {
 
 extension PetEffectArt {
     /// The effects every pet shares. Yellow for alarm and delight, blue for
-    /// water and sleep, grey for weather and dust, white for what the pet says
+    /// water and sleep, grey for weather and dust, green and orange for what
+    /// grows and flies in the grass, white for what the pet says
     /// — never the icons' own white shapes, which are glyphs, but marks drawn
     /// in the pet's pixels.
     public static let standard = PetEffectArt(
@@ -87,6 +96,8 @@ extension PetEffectArt {
             "P": PetColor(hex: 0xF07C95),
             "N": PetColor(hex: 0xB98252),
             "n": PetColor(hex: 0x8A5A34),
+            "V": PetColor(hex: 0x7BC86C),
+            "O": PetColor(hex: 0xF59A3B),
         ],
         effects: [
             .exclamation: ["YY", "YY", "YY", "YY", "YY", "..", "YY", "YY"],
@@ -121,6 +132,12 @@ extension PetEffectArt {
             .dirt: ["Nn", "nN"],
             .fish: ["..BBB.b", ".BWBBbb", "BBBBBbb", "..bbb.b"],
             .snowflake: [".B.", "BWB", ".B."],
+            .fly: ["W.W", ".G."],
+            .butterfly: ["OO.OO", "OYgYO", ".O.O."],
+            .daisy: [".W.W.", "WWYWW", ".W.W.", "..V..", "..V.."],
+            .steam: [".GW.", "GWWG", ".GG."],
+            .milk: ["W", "W"],
+            .jingle: ["Y.", ".Y", "Y."],
         ]
     )
 }

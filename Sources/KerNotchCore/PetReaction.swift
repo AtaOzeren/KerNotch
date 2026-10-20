@@ -10,7 +10,8 @@ import Foundation
 /// routine that follows can take over from it without a jump.
 ///
 /// Each species plays a reaction its own way (`PetSpecies.reactions(to:)`
-/// says which it knows): a dog barks for attention, a penguin squawks.
+/// says which it knows): a dog barks for attention, a penguin squawks, a cow
+/// moos.
 public enum PetReaction: String, CaseIterable, Sendable {
     /// The island opening: startled into a hop, with an exclamation mark.
     case surprisedHop
@@ -21,18 +22,23 @@ public enum PetReaction: String, CaseIterable, Sendable {
     case lieAndWatch
     /// The island opening: a flipper waved hello.
     case wave
+    /// The island opening: a moo of hello.
+    case moo
     /// The island closing: shaking itself off, water flying.
     case shakeOff
     /// The island closing: a long stretch, then a yawn.
     case stretch
-    /// The island closing: relief — a dog pants, a penguin fans itself.
+    /// The island closing: relief — a dog pants, a penguin fans itself, a cow
+    /// chews its cud.
     case relief
     /// The island closing: combing its chest feathers with its beak.
     case preen
+    /// The island closing: a fly buzzing round, swatted at with the tail.
+    case swatFly
     /// An agent asking something: ear flopped, head tilted, question mark.
     case headTilt
     /// An agent asking something: calling the user — a dog barks, a penguin
-    /// squawks.
+    /// squawks, a cow moos.
     case barkForAttention
     /// An agent asking something: a paw or a flipper raised, like a hand.
     case raisePaw
@@ -40,6 +46,8 @@ public enum PetReaction: String, CaseIterable, Sendable {
     case lookAround
     /// An agent asking something: a foot tapping, impatiently.
     case tapFoot
+    /// An agent asking something: the bell on its collar rung for the user.
+    case ringBell
     /// An agent failing: lying down with its ears back under a rain cloud.
     case sulk
     /// An agent failing: seeing stars.
@@ -48,14 +56,16 @@ public enum PetReaction: String, CaseIterable, Sendable {
     case faint
     /// An agent failing: feet gone from under it, flat on its back.
     case slip
-    /// An agent finishing: hopping for joy among sparkles.
+    /// An agent failing: steam snorted from the nostrils, a hoof stamped.
+    case snort
+    /// An agent finishing: hopping for joy among sparkles — a cow bucks.
     case celebrate
     /// An agent finishing: tearing back and forth across the flank.
     case zoomies
     /// An agent finishing: catching a treat that drops from above — a bone,
-    /// or a fish.
+    /// a fish or a daisy.
     case treat
-    /// An agent finishing: a dance, flippers up.
+    /// An agent finishing: a dance.
     case dance
     /// A countdown running out: calling out at the bell.
     case timerAlarm
@@ -63,8 +73,13 @@ public enum PetReaction: String, CaseIterable, Sendable {
     case powerRush
     /// The pointer moving onto the pet: delight, with hearts.
     case petted
+    /// The pointer moving onto the pet: eyes shut with delight and a soft
+    /// moo, with hearts.
+    case happyMoo
     /// The CPU watchdog's notice: too hot, with a bead of sweat.
     case sweat
+    /// The CPU watchdog's notice: fanning itself with its tail.
+    case coolOff
     /// An agent out of quota: a yawn, then off to sleep until it is back.
     case dozeOff
 

@@ -186,7 +186,7 @@ public struct PetRoutine: Equatable, Sendable {
         choreographer.hold(0.4)
         choreographer.standUp()
         switch choreographer.species {
-        case .dog:
+        case .dog, .cow:
             choreographer.show(.playBow)
             choreographer.hold(0.8)
             choreographer.show(.stand)

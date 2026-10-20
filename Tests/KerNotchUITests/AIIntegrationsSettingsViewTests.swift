@@ -182,6 +182,46 @@ struct AIIntegrationsSettingsViewTests {
         #expect(unreadable.hookAction(for: .codex) == .manualSetup)
     }
 
+    /// The status beside the button has to agree with the button: "Hook
+    /// installed" next to "Install hook" would contradict itself. An unreadable
+    /// configuration gets no status, since its button already says so.
+    @Test(
+        "hook status follows installation state",
+        arguments: [
+            (HookInstallationState.hookInstalled, AIHookStatus?.some(.installed), AIHookAction.uninstall),
+            (.hookAbsent, .notInstalled, .install),
+            (.configurationMissing, .notInstalled, .install),
+            (.configurationUnreadable, nil, .manualSetup),
+        ]
+    )
+    func hookStatusFollowsInstallationState(
+        state: HookInstallationState,
+        status: AIHookStatus?,
+        action: AIHookAction
+    ) {
+        let view = AIIntegrationsSettingsView(preferences: Store().binding, hookStates: [.codex: state])
+
+        #expect(view.hookStatus(for: .codex) == status)
+        #expect(view.hookAction(for: .codex) == action)
+    }
+
+    @Test("an agent with no reading yet reads as not installed")
+    func unknownHookStateReadsAsNotInstalled() {
+        let view = AIIntegrationsSettingsView(preferences: Store().binding, hookStates: [:])
+
+        for agentID in IPCAgentID.allCases {
+            #expect(view.hookStatus(for: agentID) == .notInstalled)
+            #expect(view.hookAction(for: agentID) == .install)
+        }
+    }
+
+    @Test("only an installed hook is reported in the positive tone")
+    func onlyAnInstalledHookIsPositive() {
+        #expect(AIHookStatus.installed.tone == SettingsPalette.positive)
+        #expect(AIHookStatus.notInstalled.tone == SettingsPalette.caption)
+        #expect(AIHookStatus.installed.title != AIHookStatus.notInstalled.title)
+    }
+
     @Test("hook button dispatches explicit user action")
     func hookButtonDispatchesAction() {
         let store = Store()

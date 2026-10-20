@@ -8,7 +8,7 @@ extension PetChoreographer {
         case .sulk:
             sulk()
         case .dazed:
-            seeStars()
+            seeStars(around: PetEffectAnchor(effect: .star, inset: 11, height: 13))
         case .faint:
             faint()
         case .celebrate:
@@ -40,7 +40,7 @@ extension PetChoreographer {
     }
 
     /// Ears back, then down on the floor under a little rain cloud.
-    private mutating func sulk() {
+    mutating func sulk() {
         sitDown()
         show(.earsBack)
         hold(0.7)
@@ -63,12 +63,12 @@ extension PetChoreographer {
         sitDown()
     }
 
-    /// The eye crossed out and three stars circling the head while the pet
+    /// The eye crossed out and three stars circling `head` while the pet
     /// sways where it sits.
-    private mutating func seeStars() {
+    mutating func seeStars(around head: PetEffectAnchor) {
         sitDown()
         show(.dazed)
-        circleStars(around: PetEffectAnchor(effect: .star, inset: 11, height: 13), for: 2.25)
+        circleStars(around: head, for: 2.25)
         for offset in [1, -1, -1, 1, 1, -1, -1, 1] {
             hold(0.25)
             sway(by: offset)
@@ -166,7 +166,7 @@ extension PetChoreographer {
 
     /// A bolt over its head, a hop, and — with the flank to itself — a dash
     /// out and back, then panting.
-    private mutating func powerRush(canRun: Bool, in geometry: PetStageGeometry) {
+    mutating func powerRush(canRun: Bool, in geometry: PetStageGeometry) {
         emit(.bolt, along: twinkling(at: besidePet(.bolt), for: 1.3, flashing: 0.15), lasting: 1.3)
         hop(height: 3)
         if canRun {
@@ -200,7 +200,7 @@ extension PetChoreographer {
 
     /// Ears back, a yawn, then down on the floor and asleep: the nap that
     /// follows lasts until the quota is back.
-    private mutating func dozeOff() {
+    mutating func dozeOff() {
         sitDown()
         show(.earsBack)
         hold(0.5)

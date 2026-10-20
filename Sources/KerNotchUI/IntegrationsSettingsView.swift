@@ -108,19 +108,19 @@ public struct IntegrationsSettingsView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-            discordSection
+            discordRow
             if showsVoiceChannelSection {
-                Divider()
-                voiceChannelSection
+                SettingsFormDivider()
+                voiceChannelRow
                     .disabled(preferences.isEnabled == false)
             }
         }
         .settingsPaneFrame(metrics)
     }
 
-    private var discordSection: some View {
-        SettingsSection(
-            title: localized("Discord"),
+    private var discordRow: some View {
+        SettingsFormRow(
+            localized("Discord"),
             caption: localized("Shows Discord voice calls on the island in place of the microphone indicator."),
             metrics: metrics
         ) {
@@ -130,19 +130,20 @@ public struct IntegrationsSettingsView: View {
             if discord.isDiscordInstalled == false {
                 HStack {
                     Label(localized("Discord is not installed on this Mac."), systemImage: "exclamationmark.triangle")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(SettingsPalette.caption.color)
                     Spacer(minLength: metrics.rowSpacing)
                     if let url = Self.downloadURL {
                         Link(localized("Get Discord"), destination: url)
                     }
                 }
+                .frame(maxWidth: metrics.captionWidth)
             }
         }
     }
 
-    private var voiceChannelSection: some View {
-        SettingsSection(
-            title: localized("Voice channel"),
+    private var voiceChannelRow: some View {
+        SettingsFormRow(
+            localized("Voice channel"),
             caption: localized(
                 "Connect Discord to see the channel name and leave the channel from the island. Discord asks you to approve KerNotch once."
             ),
@@ -156,7 +157,7 @@ public struct IntegrationsSettingsView: View {
         HStack(alignment: .firstTextBaseline) {
             if let text = Self.statusText(for: discord.status) {
                 Text(text)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(SettingsPalette.caption.color)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: metrics.rowSpacing)
@@ -170,5 +171,6 @@ public struct IntegrationsSettingsView: View {
                     .disabled(discord.status.canAuthorize == false)
             }
         }
+        .frame(maxWidth: metrics.captionWidth)
     }
 }

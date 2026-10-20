@@ -105,29 +105,33 @@ public struct AboutSettingsView: View {
         )
     }
 
+    /// The build as the Version row reads it, "1.0.0 (1)".
+    var versionDescription: String {
+        "\(information.version) (\(information.build))"
+    }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-            buildSection
-            Divider()
-            languageSection
+            SettingsFormRow(localized("Version"), metrics: metrics) {
+                Text(verbatim: versionDescription)
+                    .textSelection(.enabled)
+            }
+            SettingsFormRow(
+                localized("Music backend"),
+                caption: localized("MIT licensed. Music is read through the backend this build was compiled against."),
+                metrics: metrics
+            ) {
+                Text(verbatim: information.musicBackendName)
+            }
+            SettingsFormDivider()
+            languageRow
         }
         .settingsPaneFrame(metrics)
     }
 
-    private var buildSection: some View {
-        SettingsSection(
-            title: localized("KerNotch"),
-            caption: localized("MIT licensed. Music is read through the backend this build was compiled against."),
-            metrics: metrics
-        ) {
-            LabeledContent(localized("Version"), value: "\(information.version) (\(information.build))")
-            LabeledContent(localized("Music backend"), value: information.musicBackendName)
-        }
-    }
-
-    private var languageSection: some View {
-        SettingsSection(
-            title: localized("Language"),
+    private var languageRow: some View {
+        SettingsFormRow(
+            localized("Language"),
             caption: localized("Takes effect the next time KerNotch starts."),
             metrics: metrics
         ) {
@@ -136,9 +140,10 @@ public struct AboutSettingsView: View {
                     Text(option.displayName).tag(option)
                 }
             }
+            .labelsHidden()
+            .fixedSize()
             if restartRequired {
-                Label(localized("Restart required"), systemImage: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
+                SettingsRestartNotice()
             }
         }
     }

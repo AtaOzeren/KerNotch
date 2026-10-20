@@ -99,9 +99,124 @@ struct DisplaySelectionTests {
     func allDisplaysWithOneScreen() {
         #expect(selectDisplays(from: [builtIn], preference: .allDisplays) == [builtIn])
         #expect(selectDisplays(from: [], preference: .allDisplays).isEmpty)
-        #expect(normalizeDisplayPreference(.allDisplays, availableDisplayCount: 1) == .automatic)
-        #expect(normalizeDisplayPreference(.allDisplays, availableDisplayCount: 0) == .automatic)
-        #expect(normalizeDisplayPreference(.allDisplays, availableDisplayCount: 2) == .allDisplays)
+        #expect(normalizeDisplayPreference(.allDisplays, availableDisplays: [builtIn]) == .automatic)
+        #expect(normalizeDisplayPreference(.allDisplays, availableDisplays: []) == .automatic)
+        #expect(normalizeDisplayPreference(.allDisplays, availableDisplays: [builtIn, studioDisplay]) == .allDisplays)
+    }
+
+    // MARK: - Display numbers that move
+
+    /// macOS gives display numbers out again across reconnects and sleep: the
+    /// monitor the user chose as "2" can come back as "3" while "2" goes to
+    /// another monitor. The choice follows the monitor, not the number.
+    private let epic = DisplayDescription(identifier: "3", name: "EPIC Q40", isBuiltIn: false)
+    private let r27 = DisplayDescription(identifier: "2", name: "R27qe", isBuiltIn: false)
+
+    @Test("follows a chosen display whose number moved to another monitor")
+    func followsRenumberedDisplayByName() {
+        #expect(selectDisplay(from: [epic, r27], preference: .identified(id: "2", name: "EPIC Q40")) == epic)
+        #expect(selectDisplay(from: [r27, epic], preference: .identified(id: "2", name: "EPIC Q40")) == epic)
+    }
+
+    @Test("does not follow the old number onto another monitor while the chosen one is away")
+    func renumberedDisplayAwayFallsBack() {
+        #expect(
+            selectDisplay(from: [r27, builtIn], preference: .identified(id: "2", name: "EPIC Q40")) == builtIn
+        )
+    }
+
+    @Test("keeps the built-in display by number when its name follows another language")
+    func builtInKeepsItsNumberAcrossLanguages() {
+        let builtInTurkish = DisplayDescription(identifier: "1", name: "Yerleşik Retina Ekran", isBuiltIn: true)
+
+        #expect(
+            selectDisplay(
+                from: [r27, builtInTurkish],
+                preference: .identified(id: "1", name: "Built-in Retina Display")
+            ) == builtInTurkish
+        )
+    }
+
+    @Test("keeps a display by number while its name has not resolved yet")
+    func unresolvedNameKeepsTheNumber() {
+        let resolving = DisplayDescription(identifier: "3", name: "", isBuiltIn: false)
+
+        #expect(
+            selectDisplay(from: [r27, resolving], preference: .identified(id: "3", name: "EPIC Q40")) == resolving
+        )
+    }
+
+    @Test("finds a numbered twin by its picker name once its number moved")
+    func renumberedTwinFoundByLabel() {
+        let left = DisplayDescription(identifier: "101", name: "Studio Display", isBuiltIn: false)
+        let right = DisplayDescription(identifier: "202", name: "Studio Display", isBuiltIn: false)
+
+        #expect(
+            selectDisplay(from: [left, right], preference: .identified(id: "999", name: "Studio Display (2)")) == right
+        )
+    }
+
+    @Test("picker names number only the displays that share a name")
+    func displayLabelsNumberSharedNames() {
+        let left = DisplayDescription(identifier: "101", name: "Studio Display", isBuiltIn: false)
+        let right = DisplayDescription(identifier: "202", name: "Studio Display", isBuiltIn: false)
+
+        #expect(displayLabels(for: [builtIn, left, right]) == [
+            "Built-in Retina Display", "Studio Display (1)", "Studio Display (2)",
+        ])
+        #expect(displayLabels(for: []).isEmpty)
+    }
+
+    // MARK: - Normalizing the stored choice
+
+    @Test("re-points a renumbered choice at the display's current number")
+    func normalizationRepointsRenumberedDisplay() {
+        #expect(
+            normalizeDisplayPreference(.identified(id: "2", name: "EPIC Q40"), availableDisplays: [epic, r27])
+                == .identified(id: "3", name: "EPIC Q40")
+        )
+    }
+
+    @Test("leaves a choice whose display is connected under its own number unchanged")
+    func normalizationKeepsAnAccurateChoice() {
+        let choice = DisplayPreference.identified(id: "3", name: "EPIC Q40")
+
+        #expect(normalizeDisplayPreference(choice, availableDisplays: [epic, r27]) == choice)
+    }
+
+    @Test("keeps the stored choice while its display is away, for when it returns")
+    func normalizationKeepsAnAbsentChoice() {
+        let choice = DisplayPreference.identified(id: "2", name: "EPIC Q40")
+
+        #expect(normalizeDisplayPreference(choice, availableDisplays: [r27, builtIn]) == choice)
+        #expect(normalizeDisplayPreference(choice, availableDisplays: []) == choice)
+    }
+
+    @Test("never overwrites the stored name with one that has not resolved yet")
+    func normalizationIgnoresAnUnresolvedName() {
+        let choice = DisplayPreference.identified(id: "3", name: "EPIC Q40")
+        let resolving = DisplayDescription(identifier: "3", name: "", isBuiltIn: false)
+
+        #expect(normalizeDisplayPreference(choice, availableDisplays: [r27, resolving]) == choice)
+    }
+
+    @Test("renames the built-in choice into the language its display now uses")
+    func normalizationFollowsTheBuiltInName() {
+        let builtInTurkish = DisplayDescription(identifier: "1", name: "Yerleşik Retina Ekran", isBuiltIn: true)
+
+        #expect(
+            normalizeDisplayPreference(
+                .identified(id: "1", name: "Built-in Retina Display"),
+                availableDisplays: [builtInTurkish]
+            ) == .identified(id: "1", name: "Yerleşik Retina Ekran")
+        )
+    }
+
+    @Test("leaves rule-based choices alone")
+    func normalizationLeavesRules() {
+        for rule in [DisplayPreference.automatic, .builtIn, .named("EPIC Q40")] {
+            #expect(normalizeDisplayPreference(rule, availableDisplays: [epic, r27]) == rule)
+        }
     }
 
     @Test("single-display preferences still produce one target")

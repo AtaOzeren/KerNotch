@@ -109,6 +109,40 @@ public enum PetFrame: String, CaseIterable, Sendable {
     case slide
     /// On its back with its feet in the air: the end of a fall.
     case onBack
+    /// The jaw dropped open: mooing, standing and lying.
+    case moo
+    case sitMoo
+    /// A daisy caught in the mouth, and chewed.
+    case holdDaisy
+    case holdDaisyChew
+    /// Head lowered, a frown and the nostrils flared: snorting, and a front
+    /// hoof raised to stamp.
+    case snort
+    case stompUp
+    /// Head down in the grass, and chewing what it found there.
+    case graze
+    case grazeChew
+    /// Lying and chewing the cud: the jaw slid back, then forward.
+    case sitChewA
+    case sitChewB
+    /// Lying with the eye turned down the muzzle, at something on its nose.
+    case noseLook
+    /// Lying beside a pail filling with milk — low, half-way, full — beaming
+    /// at it full, blinking, and nudging it empty again.
+    case pailLow
+    case pailHalf
+    case pailFull
+    case pailBeam
+    case pailBlink
+    case pailNudge
+    /// The tail flicked up and out, then down and back.
+    case tailSwishA
+    case tailSwishB
+    /// The head swung one way and the bell on the collar the other: ringing it.
+    case bellLeft
+    case bellRight
+    /// Head down and the hind legs kicked out behind: a buck for joy.
+    case buck
 
     /// How the pet holds itself in this frame, which decides how it gets from
     /// here to any other frame.
@@ -117,7 +151,8 @@ public enum PetFrame: String, CaseIterable, Sendable {
         case .stand, .standBlink, .strideA, .strideB, .shakeLeft, .shakeRight, .flippersOut, .flippersUp,
             .cheerOut, .cheerUp, .beam, .waveLow, .waveHigh, .flipperRaised, .footTapUp, .footTapDown, .squawk,
             .standYawn, .stretch, .fanUp, .fanDown, .preenA, .preenB, .lookUp, .holdFish, .gulp, .danceLeft,
-            .danceRight, .swayLeft, .swayRight, .slip:
+            .danceRight, .swayLeft, .swayRight, .slip, .moo, .holdDaisy, .holdDaisyChew, .snort, .stompUp, .graze,
+            .grazeChew, .tailSwishA, .tailSwishB, .bellLeft, .bellRight, .buck:
             .standing
         case .crouch:
             .crouching
@@ -125,7 +160,8 @@ public enum PetFrame: String, CaseIterable, Sendable {
             .airborne
         case .sit, .sitBlink, .sitPant, .sitWag, .sitNod, .bark, .yawn, .curious, .curiousLow, .earsBack,
             .pawUp, .dazed, .holdBone, .holdBoneWag, .headset, .headsetBlink, .headsetNod, .sitBeam, .typing,
-            .typingLift, .typingBlink, .fishing, .fishingBite, .fishingBlink:
+            .typingLift, .typingBlink, .fishing, .fishingBite, .fishingBlink, .sitMoo, .sitChewA, .sitChewB,
+            .noseLook, .pailLow, .pailHalf, .pailFull, .pailBeam, .pailBlink, .pailNudge:
             .sitting
         case .lie, .lieBlink, .sleep, .lieSad, .lieDazed, .slide, .onBack:
             .lying
@@ -146,7 +182,9 @@ public enum PetFrame: String, CaseIterable, Sendable {
 /// Each posture has one way into it and out of it — sitting and lying pass
 /// through the crouch, a pet in the air lands before anything else — so a
 /// routine can start from whatever frame the pet was caught in and still move
-/// the way an animal does.
+/// the way an animal does. A pet whose sit is already on the floor, as a
+/// cow's is, goes between sitting and lying without it
+/// (`PetSpecies.sitsOnTheFloor`).
 public enum PetPosture: Sendable {
     case standing
     case crouching
@@ -260,5 +298,18 @@ extension PetSpriteSheet {
         pixelsPerPoint: 2,
         palette: PenguinArt.palette,
         frames: PenguinArt.frames
+    )
+}
+
+extension PetSpriteSheet {
+    /// A Holstein cow: white coat with slate patches, pink muzzle, short horns
+    /// and a bell on its collar — 32 × 24 pixels, drawn in 16 × 12 points like
+    /// the others.
+    public static let cow = PetSpriteSheet(
+        width: 32,
+        height: 24,
+        pixelsPerPoint: 2,
+        palette: CowArt.palette,
+        frames: CowArt.frames
     )
 }

@@ -207,6 +207,11 @@ struct SettingsStoreTests {
         #expect(store.petPreferences == PetPreferences(isEnabled: true, species: .penguin))
         #expect(store[.petSpecies] == .penguin)
         #expect(SettingsKey<PetSpecies>.petSpecies.name == "com.kernotch.settings.pet.species")
+
+        store.petPreferences = PetPreferences(isEnabled: true, species: .cow)
+
+        #expect(store.petPreferences == PetPreferences(isEnabled: true, species: .cow))
+        #expect(storage.object(forKey: SettingsKey<PetSpecies>.petSpecies.name) as? String == "cow")
     }
 
     @Test("removes retired keys, and leaves everything else alone")

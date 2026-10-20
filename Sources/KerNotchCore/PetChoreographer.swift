@@ -27,6 +27,8 @@ enum PetGesture: Equatable, Sendable {
     case blink
     case pant
     case wag
+    /// Chewing the cud, the jaw going back and forth.
+    case chew
 
     /// The frames it passes through, each with how long it holds. The sit it
     /// happens in restores the resting frame afterwards.
@@ -38,6 +40,8 @@ enum PetGesture: Equatable, Sendable {
             [(.sitPant, 0.25), (.sit, 0.2), (.sitPant, 0.25), (.sit, 0.2), (.sitPant, 0.25)]
         case .wag:
             [(.sitWag, 0.15), (.sit, 0.15), (.sitWag, 0.15), (.sit, 0.15), (.sitWag, 0.15)]
+        case .chew:
+            [(.sitChewA, 0.2), (.sitChewB, 0.2), (.sitChewA, 0.2), (.sitChewB, 0.2), (.sitChewA, 0.2)]
         }
     }
 }
@@ -56,7 +60,7 @@ struct PetBeat: Equatable, Sendable {
 /// makes — a pet caught in the air lands first, a lying one pushes up through
 /// the crouch — which is what lets a new routine begin mid-way through any
 /// other. What the pet is decides the rest: a penguin in a hurry slides on its
-/// belly, and each species plays a reaction its own way.
+/// belly, a cow skips along, and each species plays a reaction its own way.
 struct PetChoreographer {
     /// How long a turn on the spot takes, so the pet is seen facing the new way
     /// before it sets off.
@@ -74,6 +78,10 @@ struct PetChoreographer {
     static let strideCycle: [PetFrame] = [.strideA, .stand, .strideB, .stand]
     /// How long a sliding penguin lies where it stopped before getting up.
     static let slideCoast: TimeInterval = 0.2
+    /// The height at each step of a cow's skip, a point along at a time.
+    static let skipLifts = [1, 2, 2, 1]
+    /// Steps on the ground between one skip and the next.
+    static let stepsBetweenSkips = 6
 
     /// The sprite's width in points, which is how far an effect beside the pet
     /// has to be mirrored when the pet turns round.
@@ -170,6 +178,10 @@ struct PetChoreographer {
             show(.stand)
         case .lying:
             openEyesLying()
+            if species.sitsOnTheFloor {
+                show(.sit)
+                return
+            }
         case .standing, .crouching:
             break
         }
@@ -186,6 +198,9 @@ struct PetChoreographer {
             land()
         case .bowing:
             show(.stand)
+        case .sitting where species.sitsOnTheFloor:
+            show(.lie)
+            return
         case .standing, .sitting, .crouching:
             break
         }
@@ -219,16 +234,21 @@ struct PetChoreographer {
     }
 
     /// Stands, turns towards `position` if it has to, and goes there a point
-    /// at a time — on its belly, for a penguin in a hurry. Arrives standing.
+    /// at a time — on its belly for a penguin in a hurry, skipping for a cow.
+    /// Arrives standing.
     mutating func travel(to position: Int, gait: PetGait) {
         guard position != pose.position else { return }
         standUp()
         turn(position > pose.position ? .right : .left)
 
-        if gait == .run, species.slidesWhenHurrying {
-            slide(to: position, gait: gait)
-        } else {
+        guard gait == .run else {
             stride(to: position, gait: gait)
+            return
+        }
+        switch species.hurry {
+        case .run: stride(to: position, gait: gait)
+        case .slide: slide(to: position, gait: gait)
+        case .bound: bound(to: position, gait: gait)
         }
     }
 
@@ -259,6 +279,37 @@ struct PetChoreographer {
         }
         hold(Self.slideCoast)
         standUp()
+    }
+
+    /// Across at the gait's pace on its feet, skipping a few points into the
+    /// air every few strides. A skip is begun only where it lands before the
+    /// end, so the pet always arrives on the ground.
+    private mutating func bound(to position: Int, gait: PetGait) {
+        let direction = position > pose.position ? 1 : -1
+        var groundSteps = 0
+        var stepsSinceSkip = 0
+        var skip: ArraySlice<Int> = []
+        while pose.position != position {
+            time += gait.stepInterval
+            pose.position += direction
+            let remaining = abs(position - pose.position)
+            if skip.isEmpty, stepsSinceSkip >= Self.stepsBetweenSkips, remaining >= Self.skipLifts.count {
+                skip = Self.skipLifts[...]
+                stepsSinceSkip = 0
+            }
+            if let lift = skip.popFirst() {
+                pose.lift = lift
+                pose.frame = .hop
+            } else {
+                pose.lift = 0
+                pose.frame = Self.strideCycle[(groundSteps / gait.stepsPerStride) % Self.strideCycle.count]
+                groundSteps += 1
+                stepsSinceSkip += 1
+            }
+            mark()
+        }
+        hold(gait.stepInterval)
+        show(.stand)
     }
 
     mutating func walk(to position: Int) {
