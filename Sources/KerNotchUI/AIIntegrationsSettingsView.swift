@@ -13,12 +13,36 @@ public enum AIHookAction: Equatable, Sendable {
         case .manualSetup: localized("Manual setup")
         }
     }
+}
 
-    var symbolName: String {
+/// What an agent's row says about its hook, beside the button that changes it.
+///
+/// A configuration KerNotch cannot read has no status line: its button already
+/// says "Manual setup", and a second line saying the same would crowd the row
+/// in the longer languages.
+public enum AIHookStatus: Equatable, Sendable {
+    case installed
+    case notInstalled
+
+    public init?(_ state: HookInstallationState) {
+        switch state {
+        case .hookInstalled: self = .installed
+        case .configurationMissing, .hookAbsent: self = .notInstalled
+        case .configurationUnreadable: return nil
+        }
+    }
+
+    var title: String {
         switch self {
-        case .install: "plus.circle"
-        case .uninstall: "trash"
-        case .manualSetup: "doc.text"
+        case .installed: localized("Hook installed")
+        case .notInstalled: localized("Hook not installed")
+        }
+    }
+
+    var tone: SettingsTone {
+        switch self {
+        case .installed: SettingsPalette.positive
+        case .notInstalled: SettingsPalette.caption
         }
     }
 }
@@ -30,6 +54,10 @@ public enum AIHookAction: Equatable, Sendable {
 /// own copy would let the screen and the receivers disagree about what is
 /// enabled, which is exactly the bug the toggles exist to prevent.
 public struct AIIntegrationsSettingsView: View {
+    /// The agent's icon beside its name: the island's artwork at checkbox
+    /// height, so the row stays one line tall.
+    private static let agentIconSize: CGFloat = 18
+
     @Binding private var preferences: AIIntegrationPreferences
     private let hookStates: [IPCAgentID: HookInstallationState]
     private let metrics: SettingsPaneMetrics
@@ -111,11 +139,21 @@ public struct AIIntegrationsSettingsView: View {
     }
 
     public func hookAction(for agentID: IPCAgentID) -> AIHookAction {
-        switch hookStates[agentID] ?? .configurationMissing {
+        switch hookState(for: agentID) {
         case .configurationMissing, .hookAbsent: .install
         case .hookInstalled: .uninstall
         case .configurationUnreadable: .manualSetup
         }
+    }
+
+    public func hookStatus(for agentID: IPCAgentID) -> AIHookStatus? {
+        AIHookStatus(hookState(for: agentID))
+    }
+
+    /// An agent the window has no reading for yet is treated as having no
+    /// configuration file, the state that offers to install.
+    private func hookState(for agentID: IPCAgentID) -> HookInstallationState {
+        hookStates[agentID] ?? .configurationMissing
     }
 
     public func performHookAction(for agentID: IPCAgentID) {
@@ -124,41 +162,54 @@ public struct AIIntegrationsSettingsView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-            agentSection
-            Divider()
-            eventSection
-            Divider()
-            attentionGlowSection
+            agentRow
+            SettingsFormDivider()
+            eventRow
+            SettingsFormDivider()
+            attentionGlowRow
         }
         .settingsPaneFrame(metrics)
     }
 
-    private var agentSection: some View {
-        SettingsSection(
-            title: localized("Agents"),
+    private var agentRow: some View {
+        SettingsFormRow(
+            localized("Agents"),
             caption: localized("KerNotch shows nothing for an agent until you enable it here."),
             metrics: metrics
         ) {
             ForEach(IPCAgentID.allCases, id: \.self) { agentID in
-                HStack {
-                    Toggle(agentID.displayName, isOn: binding(for: agentID))
-                    Spacer(minLength: metrics.rowSpacing)
-                    let action = hookAction(for: agentID)
-                    Button {
-                        performHookAction(for: agentID)
-                    } label: {
-                        Label(action.title, systemImage: action.symbolName)
-                    }
-                    .buttonStyle(.borderless)
-                    .accessibilityLabel(action.title)
-                }
+                agentLine(agentID)
             }
         }
     }
 
-    private var eventSection: some View {
-        SettingsSection(
-            title: localized("Events"),
+    private func agentLine(_ agentID: IPCAgentID) -> some View {
+        HStack(spacing: metrics.rowSpacing) {
+            Toggle(isOn: binding(for: agentID)) {
+                HStack(spacing: 6) {
+                    AIAgentIcon(agentID: agentID, size: Self.agentIconSize)
+                        .accessibilityHidden(true)
+                    Text(agentID.displayName)
+                }
+            }
+            Spacer(minLength: metrics.rowSpacing)
+            if let status = hookStatus(for: agentID) {
+                Text(status.title)
+                    .font(.system(size: metrics.footnoteSize))
+                    .foregroundStyle(status.tone.color)
+                    .lineLimit(1)
+            }
+            Button(hookAction(for: agentID).title) {
+                performHookAction(for: agentID)
+            }
+            .controlSize(.small)
+            .fixedSize()
+        }
+    }
+
+    private var eventRow: some View {
+        SettingsFormRow(
+            localized("Events"),
             caption: localized("A disabled event never reaches the notch — it is dropped on arrival."),
             metrics: metrics
         ) {
@@ -173,22 +224,20 @@ public struct AIIntegrationsSettingsView: View {
     /// agent off there is nothing that could glow. The test button is not — it
     /// is how someone sees what the switch does before deciding to enable
     /// anything.
-    private var attentionGlowSection: some View {
-        SettingsSection(
-            title: localized("Island glow"),
+    private var attentionGlowRow: some View {
+        SettingsFormRow(
+            localized("Island glow"),
             caption: localized(
                 "A soft light runs around the small island when an agent finishes, asks for input, or fails."
             ),
             metrics: metrics
         ) {
-            HStack {
+            HStack(spacing: metrics.columnSpacing) {
                 Toggle(localized("Show glow"), isOn: attentionGlowBinding)
                     .disabled(!isEventSectionEnabled)
-                Spacer(minLength: metrics.rowSpacing)
                 Button(action: previewAttentionGlow) {
                     Label(localized("Test glow"), systemImage: "sparkles")
                 }
-                .buttonStyle(.borderless)
                 .accessibilityLabel(localized("Test glow"))
             }
         }

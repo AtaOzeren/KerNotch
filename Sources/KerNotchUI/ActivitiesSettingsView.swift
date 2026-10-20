@@ -71,18 +71,18 @@ public struct ActivitiesSettingsView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-            activitiesSection
+            activitiesRow
             if isMusicAutomationSectionVisible {
-                Divider()
-                musicAutomationSection
+                SettingsFormDivider()
+                musicAutomationRow
             }
         }
         .settingsPaneFrame(metrics)
     }
 
-    private var activitiesSection: some View {
-        SettingsSection(
-            title: localized("Activities"),
+    private var activitiesRow: some View {
+        SettingsFormRow(
+            localized("Activities"),
             caption: localized("A switched-off activity stops being observed, not just hidden."),
             metrics: metrics
         ) {
@@ -90,18 +90,16 @@ public struct ActivitiesSettingsView: View {
                 Toggle(isOn: binding(for: identifier)) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(identifier.displayName)
-                        Text(identifier.caption)
-                            .font(.system(size: metrics.footnoteSize))
-                            .foregroundStyle(.secondary)
+                        SettingsCaption(identifier.caption, metrics: metrics)
                     }
                 }
             }
         }
     }
 
-    private var musicAutomationSection: some View {
-        SettingsSection(
-            title: localized("Music control"),
+    private var musicAutomationRow: some View {
+        SettingsFormRow(
+            localized("Music control"),
             caption: localized("KerNotch asks macOS for each player separately, and only when you press the button."),
             metrics: metrics
         ) {
@@ -114,14 +112,11 @@ public struct ActivitiesSettingsView: View {
     private func automationRow(_ access: MusicAutomationAccess) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(access.target.displayName)
-            Text(access.explanation)
-                .font(.system(size: metrics.footnoteSize))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            SettingsCaption(access.explanation, metrics: metrics)
             if let connectionTitle = access.connectionTitle {
                 Label(connectionTitle, systemImage: "checkmark.circle.fill")
                     .font(.system(size: metrics.footnoteSize, weight: .medium))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(SettingsPalette.positive.color)
             } else if isAutomationRequestInProgress(for: access.target) {
                 HStack(spacing: 6) {
                     ProgressView()
@@ -129,7 +124,7 @@ public struct ActivitiesSettingsView: View {
                     Text(localized("Connecting…"))
                 }
                 .font(.system(size: metrics.footnoteSize))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(SettingsPalette.caption.color)
             } else if let actionTitle = access.actionTitle {
                 Button(actionTitle) { requestAutomation(for: access.target) }
                     .font(.system(size: metrics.footnoteSize))

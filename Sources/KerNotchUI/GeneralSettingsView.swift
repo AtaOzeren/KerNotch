@@ -3,7 +3,7 @@ import ServiceManagement
 import SwiftUI
 
 /// The General pane: display target, island size, hiding in full screen, menu
-/// bar visibility, launch at login, appearance, and reduced motion.
+/// bar visibility, reduced motion, launch at login, and restarting the app.
 ///
 /// Like the AI Integrations pane, it owns no state — it edits the binding the
 /// composition root hands it, so the window and the store never hold two
@@ -37,15 +37,8 @@ public struct GeneralSettingsView: View {
     /// Built from the displays passed in rather than read from `NSScreen` here,
     /// so a test can enumerate the picker without a second monitor plugged in.
     public var displayOptions: [DisplayPreference] {
-        let nameCounts = Dictionary(grouping: availableDisplays, by: \.name).mapValues(\.count)
-        var seenNames: [String: Int] = [:]
-        let attached = availableDisplays.map { display in
-            seenNames[display.name, default: 0] += 1
-            let name =
-                nameCounts[display.name, default: 0] > 1
-                ? "\(display.name) (\(seenNames[display.name, default: 1]))"
-                : display.name
-            return DisplayPreference.identified(id: display.identifier, name: name)
+        let attached = zip(availableDisplays, displayLabels(for: availableDisplays)).map { display, label in
+            DisplayPreference.identified(id: display.identifier, name: label)
         }
         let allDisplays: [DisplayPreference] = availableDisplays.count > 1 ? [.allDisplays] : []
         return [.automatic] + allDisplays + [.builtIn] + attached
@@ -120,22 +113,23 @@ public struct GeneralSettingsView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-            displaySection
-            Divider()
-            islandSection
-            Divider()
-            appearanceSection
-            Divider()
-            startupSection
-            Divider()
-            applicationSection
+            displayRow
+            SettingsFormDivider()
+            islandSizeRow
+            fullScreenRow
+            SettingsFormDivider()
+            menuBarRow
+            motionRow
+            SettingsFormDivider()
+            startupRow
+            applicationRow
         }
         .settingsPaneFrame(metrics)
     }
 
-    private var displaySection: some View {
-        SettingsSection(
-            title: localized("Display"),
+    private var displayRow: some View {
+        SettingsFormRow(
+            localized("Display"),
             caption: localized("Automatic follows the display with the notch, then falls back to the built-in screen."),
             metrics: metrics
         ) {
@@ -144,12 +138,14 @@ public struct GeneralSettingsView: View {
                     Text(title(for: option)).tag(option)
                 }
             }
+            .labelsHidden()
+            .fixedSize()
         }
     }
 
-    private var islandSection: some View {
-        SettingsSection(
-            title: localized("Island"),
+    private var islandSizeRow: some View {
+        SettingsFormRow(
+            localized("Island size"),
             caption: localized("Large widens the island that opens on hover and enlarges its text and controls."),
             metrics: metrics
         ) {
@@ -158,37 +154,49 @@ public struct GeneralSettingsView: View {
                     Text(size.displayName).tag(size)
                 }
             }
+            .settingsSegmentedPicker()
+        }
+    }
+
+    private var fullScreenRow: some View {
+        SettingsFormRow(localized("Full screen"), metrics: metrics) {
             Toggle(localized("Hide in full screen and Mission Control"), isOn: hidesInFullScreen)
         }
     }
 
-    private var appearanceSection: some View {
-        SettingsSection(
-            title: localized("Appearance"),
+    private var menuBarRow: some View {
+        SettingsFormRow(localized("Menu bar"), metrics: metrics) {
+            Toggle(localized("Show menu bar icon"), isOn: menuBarIconVisibility)
+            if shouldShowMenuBarPlacementHint {
+                SettingsCaption(
+                    localized(
+                        "macOS shows this icon on the main menu bar. With multiple displays, it may appear on another screen."
+                    ),
+                    metrics: metrics
+                )
+            }
+        }
+    }
+
+    private var motionRow: some View {
+        SettingsFormRow(
+            localized("Motion"),
             caption: localized("Reduced motion also follows the system accessibility setting unless you override it."),
             metrics: metrics
         ) {
-            Toggle(localized("Show menu bar icon"), isOn: menuBarIconVisibility)
-            if shouldShowMenuBarPlacementHint {
-                Text(
-                    localized(
-                        "macOS shows this icon on the main menu bar. With multiple displays, it may appear on another screen."
-                    )
-                )
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            }
             Picker(localized("Motion"), selection: reducedMotion) {
                 ForEach(ReducedMotionSetting.allCases, id: \.self) { option in
                     Text(option.displayName).tag(option)
                 }
             }
+            .labelsHidden()
+            .fixedSize()
         }
     }
 
-    private var startupSection: some View {
-        SettingsSection(
-            title: localized("Startup"),
+    private var startupRow: some View {
+        SettingsFormRow(
+            localized("Startup"),
             caption: localized(
                 "KerNotch has no Dock icon. Open the app again to show Settings when its menu bar icon is hidden."),
             metrics: metrics
@@ -196,9 +204,10 @@ public struct GeneralSettingsView: View {
             Toggle(localized("Launch at login"), isOn: launchAtLogin)
             if launchAtLoginNeedsApproval {
                 VStack(alignment: .leading, spacing: metrics.rowSpacing / 2) {
-                    Text(localized("Allow KerNotch in Login Items to finish enabling launch at login."))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    SettingsCaption(
+                        localized("Allow KerNotch in Login Items to finish enabling launch at login."),
+                        metrics: metrics
+                    )
                     Button(localized("Open Login Items Settings")) {
                         SMAppService.openSystemSettingsLoginItems()
                     }
@@ -209,17 +218,16 @@ public struct GeneralSettingsView: View {
         }
     }
 
-    private var applicationSection: some View {
-        SettingsSection(
-            title: localized("Application"),
+    private var applicationRow: some View {
+        SettingsFormRow(
+            localized("Application"),
             caption: restartRequired
                 ? localized("Some changes need a restart. Finish your selections, then restart KerNotch.")
                 : localized("Restarts KerNotch without changing your settings."),
             metrics: metrics
         ) {
             if restartRequired {
-                Label(localized("Restart required"), systemImage: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
+                SettingsRestartNotice()
             }
             Button(action: requestRestart) {
                 Label(localized("Restart KerNotch"), systemImage: "arrow.clockwise")
